@@ -1,31 +1,33 @@
 import React, { useState, useMemo } from 'react';
 import { AppProvider, useAppContext } from './context/AppContext';
-import { 
-  AlertTriangle, 
-  ArrowRight, 
+import {
+  AlertTriangle,
   CheckCircle2,
   Download,
-  MessageSquare,
-  ShieldCheck,
-  Users,
   Gamepad2,
   LayoutDashboard,
+  ShieldCheck,
+  Users,
   BadgeCheck,
   Lock,
-  LogIn,
   Menu,
   X,
 } from 'lucide-react';
 import { classNames, discordLink, downloadLink, formatDate, generateComplaintId, uid } from './lib/utils';
 import { complaintOptions, complaintStatusOptions } from './lib/storage';
-import { Complaint, ComplaintMessage, ComplaintStatus, AppUser, ComplaintCategory } from './lib/types';
+import { AdminMessage, AppUser, Complaint, ComplaintCategory, ComplaintMessage, ComplaintStatus } from './lib/types';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useIsMobile } from './hooks/useLocalStorage';
 
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [authForm, setAuthForm] = useState({ email: '', password: '', username: '', role: 'user' as 'user' | 'admin' });
+  const [authForm, setAuthForm] = useState({
+    email: '',
+    password: '',
+    username: '',
+    role: 'user' as 'user' | 'admin',
+  });
   const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [selectedComplaintId, setSelectedComplaintId] = useState<string>('');
@@ -74,7 +76,9 @@ function App() {
       setLocalUser(nextUser);
       setSuccessMessage('Registration successful. Welcome to PRIME MOBILE.');
     } else {
-      const loginUser = nextUser.role === 'admin' || authForm.email.includes('admin') ? { ...nextUser, role: 'admin', username: 'Admin' } : nextUser;
+      const loginUser = nextUser.role === 'admin' || authForm.email.includes('admin')
+        ? { ...nextUser, role: 'admin', username: 'Admin' }
+        : nextUser;
       setUser(loginUser);
       setLocalUser(loginUser);
       setSuccessMessage('Login successful.');
@@ -108,14 +112,19 @@ function App() {
     };
 
     setComplaints((prev) => [complaint, ...prev]);
-    setMessagesByComplaint((prev) => ({ ...prev, [complaintId]: [{
-      id: uid('msg'),
-      complaintId,
-      sender: complaintForm.username,
-      senderRole: 'user',
-      content: 'Complaint submitted. We will review it shortly.',
-      createdAt: now,
-    }] }));
+    setMessagesByComplaint((prev) => ({
+      ...prev,
+      [complaintId]: [
+        {
+          id: uid('msg'),
+          complaintId,
+          sender: complaintForm.username,
+          senderRole: 'user',
+          content: 'Complaint submitted. We will review it shortly.',
+          createdAt: now,
+        },
+      ],
+    }));
     setOpenedComplaint(complaint);
     setSelectedComplaintId(complaintId);
     setComplaintForm({
@@ -151,9 +160,8 @@ function App() {
   const sendAdminMessage = () => {
     if (!adminChat.trim()) return;
 
-    const message: ComplaintMessage = {
+    const message: AdminMessage = {
       id: uid('adminmsg'),
-      complaintId: 'admin-global',
       sender: activeUser?.username || 'Admin',
       senderRole: 'admin',
       content: adminChat,
@@ -165,11 +173,13 @@ function App() {
   };
 
   const updateComplaintStatus = (complaintId: string, nextStatus: ComplaintStatus) => {
-    setComplaints((prev) => prev.map((complaint) =>
-      complaint.id === complaintId
-        ? { ...complaint, status: nextStatus, updatedAt: new Date().toISOString() }
-        : complaint,
-    ));
+    setComplaints((prev) =>
+      prev.map((complaint) =>
+        complaint.id === complaintId
+          ? { ...complaint, status: nextStatus, updatedAt: new Date().toISOString() }
+          : complaint,
+      ),
+    );
   };
 
   const headerLinks = [
@@ -202,7 +212,9 @@ function App() {
 
         <nav className={classNames('nav', isMobile && mobileMenuOpen ? 'nav-open' : '')}>
           {headerLinks.map((link) => (
-            <a href={link.href} key={link.label} onClick={() => setMobileMenuOpen(false)}>{link.label}</a>
+            <a href={link.href} key={link.label} onClick={() => setMobileMenuOpen(false)}>
+              {link.label}
+            </a>
           ))}
         </nav>
 
@@ -215,7 +227,9 @@ function App() {
           ) : (
             <button className="ghost-btn" onClick={() => setAuthMode('login')}>Login</button>
           )}
-          <button className="menu-toggle" onClick={() => setMobileMenuOpen((v) => !v)}>{mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}</button>
+          <button className="menu-toggle" onClick={() => setMobileMenuOpen((v) => !v)}>
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
         </div>
       </header>
 
@@ -432,8 +446,8 @@ function App() {
             </div>
 
             <div className="auth-switch">
-              <button className={classNames(authMode === 'login' ? 'active' : '')} onClick={() => setAuthMode('login')}>Login</button>
-              <button className={classNames(authMode === 'register' ? 'active' : '')} onClick={() => setAuthMode('register')}>Register</button>
+              <button type="button" className={classNames(authMode === 'login' ? 'active' : '')} onClick={() => setAuthMode('login')}>Login</button>
+              <button type="button" className={classNames(authMode === 'register' ? 'active' : '')} onClick={() => setAuthMode('register')}>Register</button>
             </div>
 
             <form className="auth-form" onSubmit={onAuthSubmit}>
@@ -462,7 +476,7 @@ function App() {
             </form>
 
             <div className="inline-actions">
-              <button className="secondary-btn" onClick={loginAsAdmin}>Secure Admin Login</button>
+              <button type="button" className="secondary-btn" onClick={loginAsAdmin}>Secure Admin Login</button>
             </div>
           </div>
 
@@ -482,7 +496,7 @@ function App() {
 
                 <div className="filter-row">
                   {complaintStatusOptions.map((status) => (
-                    <button key={status} className="status-filter" onClick={() => null}>{status}</button>
+                    <button type="button" key={status} className="status-filter" onClick={() => null}>{status}</button>
                   ))}
                 </div>
 

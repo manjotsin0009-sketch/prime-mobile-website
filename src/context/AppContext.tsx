@@ -1,6 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AppUser, Complaint, ComplaintMessage, defaultAdminMessages, defaultComplaints, defaultMessages } from '../lib/types';
-import { getAdminMessages, getComplaintMessages, getComplaints, saveAdminMessages, saveComplaintMessages, saveComplaints } from '../lib/storage';
+import {
+  AdminMessage,
+  AppUser,
+  Complaint,
+  ComplaintMessage,
+  defaultAdminMessages,
+  defaultComplaints,
+  defaultMessages,
+} from '../lib/types';
+import {
+  getAdminMessages,
+  getComplaintMessages,
+  getComplaints,
+  saveAdminMessages,
+  saveComplaintMessages,
+  saveComplaints,
+} from '../lib/storage';
 
 interface AppContextValue {
   user: AppUser | null;
@@ -9,8 +24,8 @@ interface AppContextValue {
   setComplaints: React.Dispatch<React.SetStateAction<Complaint[]>>;
   messagesByComplaint: Record<string, ComplaintMessage[]>;
   setMessagesByComplaint: React.Dispatch<React.SetStateAction<Record<string, ComplaintMessage[]>>>;
-  adminMessages: ComplaintMessage[];
-  setAdminMessages: React.Dispatch<React.SetStateAction<ComplaintMessage[]>>;
+  adminMessages: AdminMessage[];
+  setAdminMessages: React.Dispatch<React.SetStateAction<AdminMessage[]>>;
   isAdmin: boolean;
   loginAsAdmin: () => void;
   logout: () => void;
@@ -32,9 +47,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
     return base;
   });
-  const [adminMessages, setAdminMessages] = useState<ComplaintMessage[]>(() => {
+  const [adminMessages, setAdminMessages] = useState<AdminMessage[]>(() => {
     const saved = getAdminMessages();
-    return saved.length ? saved : defaultAdminMessages as ComplaintMessage[];
+    return saved.length ? saved : defaultAdminMessages;
   });
 
   useEffect(() => {
